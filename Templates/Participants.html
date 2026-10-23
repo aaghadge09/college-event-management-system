@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Participants | JSPM Events{% endblock %}
+{% block content %}
+
+<a href="{{ url_for('dashboard') }}">← Back to dashboard</a>
+<h1 class="h2 mt-3">{{ event.title }} participants</h1>
+<p class="text-secondary">{{ students|length }} registered</p>
+
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-striped align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Student ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Department</th>
+                    <th>Registered</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for student in students %}
+                <tr>
+                    <td>{{ student.student_no }}</td>
+                    <td>{{ student.full_name }}</td>
+                    <td>{{ student.email }}</td>
+                    <td>{{ student.department }}</td>
+                    <td>{{ student.registered_at.strftime('%d %b %Y') }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5" class="text-center p-4">
+                        No students registered yet.
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

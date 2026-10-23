@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}Event Form | JSPM Events{% endblock %}
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card p-4">
+            <h1 class="h2 mb-4">
+                {{ "Edit event" if event else "Create event" }}
+            </h1>
+
+            <form method="post"
+                  enctype="multipart/form-data"
+                  class="row g-3">
+
+                <div class="col-md-8">
+                    <label class="form-label">Title *</label>
+                    <input class="form-control"
+                           name="title"
+                           required
+                           value="{{ event.title if event else '' }}">
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Category</label>
+                    <input class="form-control"
+                           name="category"
+                           value="{{ event.category if event else '' }}">
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-control"
+                              name="description"
+                              rows="4">{{ event.description if event else '' }}</textarea>
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label">Event photo</label>
+                    <input class="form-control"
+                           type="file"
+                           name="image"
+                           accept=".jpg,.jpeg,.png,.webp">
+
+                    <div class="form-text">
+                        Choose a JPG, JPEG, PNG, or WEBP image. Maximum size: 5 MB.
+                    </div>
+
+                    {% if event and event.image_filename %}
+                        <img class="event-image-preview mt-3"
+                             src="{{ url_for('static', filename='uploads/' ~ event.image_filename) }}"
+                             alt="Current event photo">
+                    {% endif %}
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Venue</label>
+                    <input class="form-control"
+                           name="venue"
+                           value="{{ event.venue if event else '' }}">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Date and time *</label>
+                    <input class="form-control"
+                           type="datetime-local"
+                           name="event_date"
+                           required
+                           value="{{ event.event_date.strftime('%Y-%m-%dT%H:%M') if event else '' }}">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Capacity (optional)</label>
+                    <input class="form-control"
+                           type="number"
+                           min="1"
+                           name="capacity"
+                           value="{{ event.capacity if event and event.capacity else '' }}">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Status</label>
+                    <select class="form-select" name="status">
+                        {% for status in ["Draft", "Published", "Completed", "Cancelled"] %}
+                            <option value="{{ status }}"
+                                {% if event and event.status == status %}selected
+                                {% elif not event and status == "Draft" %}selected{% endif %}>
+                                {{ status }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-12">
+                    <button class="btn btn-primary">Save event</button>
+                    <a class="btn btn-light"
+                       href="{{ url_for('dashboard') }}">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard | JSPM Events{% endblock %}
+
+{% block content %}
+<section class="admin-hero">
+    <div class="admin-hero-copy">
+        <span class="admin-eyebrow">JSPM UNIVERSITY PUNE · ADMIN</span>
+        <h1>Welcome back, {{ session.get('admin_name', 'Admin') }}</h1>
+        <p>Here’s an overview of your campus events and registrations.</p>
+    </div>
+
+    <div class="admin-hero-actions">
+        <a class="admin-action admin-action-glass"
+           href="{{ url_for('report') }}">
+            <span aria-hidden="true">↧</span> Download report
+        </a>
+        <a class="admin-action admin-action-glass"
+           href="{{ url_for('create_admin_page') }}">
+            <span aria-hidden="true">＋</span> Add admin
+        </a>
+        <a class="admin-action admin-action-yellow"
+           href="{{ url_for('event_form') }}">
+            <span aria-hidden="true">＋</span> Create event
+        </a>
+    </div>
+
+    <div class="admin-hero-orb" aria-hidden="true">✦</div>
+</section>
+
+<section class="admin-metrics" aria-label="Dashboard totals">
+    <article class="metric-card metric-events">
+        <div class="metric-top">
+            <span class="metric-icon">✦</span>
+            <span class="metric-caption">ALL EVENTS</span>
+        </div>
+        <strong>{{ events|length }}</strong>
+        <span class="metric-description">Events in your system</span>
+    </article>
+
+    <article class="metric-card metric-students">
+        <div class="metric-top">
+            <span class="metric-icon">♙</span>
+            <span class="metric-caption">STUDENTS</span>
+        </div>
+        <strong>{{ student_count }}</strong>
+        <span class="metric-description">Registered student profiles</span>
+    </article>
+
+    <article class="metric-card metric-registrations">
+        <div class="metric-top">
+            <span class="metric-icon">✓</span>
+            <span class="metric-caption">PARTICIPATION</span>
+        </div>
+        <strong>{{ registration_count }}</strong>
+        <span class="metric-description">Total event registrations</span>
+    </article>
+</section>
+
+<section class="admin-manage-section">
+    <div class="admin-section-heading">
+        <div>
+            <span class="admin-section-kicker">CAMPUS PROGRAMMING</span>
+            <h2>Manage events</h2>
+            <p>Create events, review participants, and update event details.</p>
+        </div>
+
+        <a class="admin-new-event-link" href="{{ url_for('event_form') }}">
+            <span aria-hidden="true">＋</span> New event
+        </a>
+    </div>
+
+    <div class="admin-table-card">
+        {% if events %}
+            <div class="table-responsive">
+                <table class="table admin-table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th class="ps-4">Event</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Participants</th>
+                            <th class="text-end pe-4">Manage</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for event in events %}
+                        <tr>
+                            <td class="ps-4">
+                                <div class="admin-event-cell">
+                                    {% if event.image_filename %}
+                                        <img
+                                            class="admin-event-photo"
+                                            src="{{ url_for('static', filename='uploads/' ~ event.image_filename) }}"
+                                            alt="{{ event.title }}"
+                                        >
+                                    {% else %}
+                                        <div class="admin-event-photo-placeholder"
+                                             aria-hidden="true">✦</div>
+                                    {% endif %}
+
+                                    <div class="admin-event-copy">
+                                        <strong>{{ event.title }}</strong>
+                                        <span>{{ event.category or "Campus event" }}</span>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>
+                                <span class="admin-date">
+                                    {{ event.event_date.strftime('%d %b %Y') }}
+                                </span>
+                                <small class="admin-time">
+                                    {{ event.event_date.strftime('%I:%M %p') }}
+                                </small>
+                            </td>
+
+                            <td>
+                                <span class="admin-status status-{{ event.status|lower }}">
+                                    <span></span>{{ event.status }}
+                                </span>
+                            </td>
+
+                            <td>
+                                <strong class="admin-count">
+                                    {{ event.registration_count }}
+                                </strong>
+                                {% if event.capacity %}
+                                    <span class="admin-capacity">/ {{ event.capacity }}</span>
+                                {% endif %}
+                            </td>
+
+                            <td class="text-end pe-4">
+                                <div class="admin-row-actions">
+                                    <a class="admin-small-button participants-button"
+                                       href="{{ url_for('participants', event_id=event.id) }}">
+                                        Participants
+                                    </a>
+
+                                    <a class="admin-small-button edit-button"
+                                       href="{{ url_for('event_form', event_id=event.id) }}">
+                                        Edit
+                                    </a>
+
+                                    <form method="post"
+                                          action="{{ url_for('delete_event', event_id=event.id) }}"
+                                          onsubmit="return confirm('Delete this event?')">
+                                        <button class="admin-small-button delete-button"
+                                                type="submit">
+                                            Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="admin-empty-state">
+                <span aria-hidden="true">✦</span>
+                <h3>Your event list is ready</h3>
+                <p>Create your first event to start welcoming participants.</p>
+                <a class="admin-action admin-action-blue"
+                   href="{{ url_for('event_form') }}">
+                    Create your first event
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

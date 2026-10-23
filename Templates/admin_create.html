@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Add Admin | JSPM Events{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-4">
+    <div class="col-md-7 col-lg-5">
+        <div class="card p-4">
+            <span class="admin-kicker">ADMINISTRATION</span>
+            <h1 class="h3 mt-2">Create an admin account</h1>
+            <p class="text-secondary">
+                Add another administrator to help manage JSPM events.
+            </p>
+
+            <form method="post">
+                <label class="form-label" for="username">New username</label>
+                <input class="form-control mb-3"
+                       id="username"
+                       name="username"
+                       minlength="3"
+                       required>
+
+                <label class="form-label" for="password">Password</label>
+                <input class="form-control mb-3"
+                       id="password"
+                       type="password"
+                       name="password"
+                       minlength="10"
+                       required>
+
+                <label class="form-label" for="confirm_password">
+                    Confirm password
+                </label>
+                <input class="form-control mb-4"
+                       id="confirm_password"
+                       type="password"
+                       name="confirm_password"
+                       minlength="10"
+                       required>
+
+                <button class="btn btn-primary">Create admin</button>
+                <a class="btn btn-light"
+                   href="{{ url_for('dashboard') }}">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

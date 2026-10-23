@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Admin Login | JSPM Events{% endblock %}
+
+{% block content %}
+<div class="admin-login-wrap">
+    <section class="admin-login-card">
+        <img
+            src="{{ url_for('static', filename='jspm-logo.png') }}"
+            alt="JSPM University logo"
+            class="admin-login-logo"
+        >
+
+        <span class="admin-kicker">JSPM UNIVERSITY PUNE</span>
+        <h1>Admin sign in</h1>
+        <p class="text-secondary">
+            Sign in to manage campus events and registrations.
+        </p>
+
+        <form method="post">
+            <label class="form-label" for="username">Username</label>
+            <input class="form-control mb-3"
+                   id="username"
+                   name="username"
+                   autocomplete="username"
+                   required>
+
+            <label class="form-label" for="password">Password</label>
+            <input class="form-control mb-4"
+                   id="password"
+                   type="password"
+                   name="password"
+                   autocomplete="current-password"
+                   required>
+
+            <button class="btn btn-primary w-100" type="submit">
+                Sign in to dashboard
+            </button>
+        </form>
+
+        <a class="admin-back-link" href="{{ url_for('index') }}">
+            ← Back to events
+        </a>
+    </section>
+</div>
+{% endblock %}
