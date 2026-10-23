@@ -17,7 +17,8 @@ A Flask and MySQL application for publishing college events, managing registrati
    pip install -r requirements.txt
    ```
 
-4. Create a MySQL database and tables by running `schema.sql` in MySQL.
+4. Create a MySQL database and tables by running `schema.sql` in MySQL. It includes the event image column for new databases.
+   For a database created before event image support was added, run `add_event_image_column.sql` once instead.
 5. Copy `.env.example` to `.env` and set your database credentials and a unique `SECRET_KEY`.
 6. Create the first administrator:
 

@@ -21,8 +21,11 @@ from werkzeug.utils import secure_filename
 
 load_dotenv()
 
-app = Flask(__name__)
-app.secret_key = os.getenv("SECRET_KEY", "change-this-secret")
+app = Flask(__name__, template_folder="Templates", static_folder="Static")
+secret_key = os.getenv("SECRET_KEY")
+if not secret_key or secret_key == "replace-with-a-long-random-secret":
+    raise RuntimeError("Set a unique SECRET_KEY in your .env file before starting the app.")
+app.secret_key = secret_key
 app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024
 
 UPLOAD_FOLDER = os.path.join(app.static_folder, "uploads")
@@ -135,13 +138,13 @@ def register(event_id):
             connection.start_transaction()
 
             cursor.execute(
-                "SELECT capacity FROM events WHERE id=%s FOR UPDATE",
+                "SELECT capacity, status FROM events WHERE id=%s FOR UPDATE",
                 (event_id,),
             )
             row = cursor.fetchone()
 
-            if row is None:
-                raise ValueError("Event no longer exists.")
+            if row is None or row[1] != "Published":
+                raise ValueError("This event is no longer open for registration.")
 
             capacity = row[0]
 
@@ -192,9 +195,12 @@ def register(event_id):
                 "This student is already registered for this event.",
                 "warning",
             )
-        except (mysql.connector.Error, ValueError) as error:
+        except ValueError as error:
             connection.rollback()
-            flash(f"Could not complete registration: {error}", "danger")
+            flash(str(error), "danger")
+        except mysql.connector.Error:
+            connection.rollback()
+            flash("Could not complete registration. Please try again.", "danger")
         finally:
             cursor.close()
             connection.close()
@@ -436,7 +442,7 @@ def participants(event_id):
         return redirect(url_for("dashboard"))
 
     return render_template(
-        "participants.html",
+        "Participants.html",
         event=event,
         students=students,
     )
@@ -486,4 +492,8 @@ def report():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(
+        host="127.0.0.1",
+        port=5000,
+        debug=os.getenv("FLASK_DEBUG", "false").lower() == "true",
+    )

@@ -17,7 +17,8 @@ CREATE TABLE events (
     event_date DATETIME NOT NULL,
     capacity INT NULL,
     status ENUM('Draft', 'Published', 'Completed', 'Cancelled')
-        NOT NULL DEFAULT 'Draft'
+        NOT NULL DEFAULT 'Draft',
+    image_filename VARCHAR(255) NULL
 );
 
 CREATE TABLE students (
